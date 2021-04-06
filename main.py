@@ -1,16 +1,16 @@
-#!/usr/bin/env python3
+#/usr/bin/env python3
 # ^ Tells Unix operating systems to run with Python3 when it gets executed
 
 
 import pygame, sys, time, random, colorsys, math
 from pygame.math import Vector2
 from pygame.locals import *
-from .player import Player
-from .background import Background
-from .button import Button
-from .bean import Bean
-from .utils import clamp
-from .utils import checkCollisions
+from player import Player
+from background import Background
+from button import Button
+from bean import Bean
+from utils import clamp
+from utils import checkCollisions
 
 
 def main():
@@ -32,10 +32,6 @@ def main():
     title_bg.fill((255, 30.599999999999998, 0.0), special_flags=pygame.BLEND_ADD)
     shadow = pygame.image.load('data/gfx/shadow.png')
     # get sounds
-    flapfx = pygame.mixer.Sound("data/sfx/flap.wav")
-    upgradefx = pygame.mixer.Sound("data/sfx/upgrade.wav")
-    beanfx = pygame.mixer.Sound("data/sfx/bean.wav")
-    deadfx = pygame.mixer.Sound("data/sfx/dead.wav")
     # colors
     WHITE=(255,255,255) # constant
     # variables
@@ -74,7 +70,6 @@ def main():
     splashScreenTimer = 0
     #splash screen
     # playing a sound
-    pygame.mixer.Sound.play(flapfx)
     while splashScreenTimer < 100:
         dt = time.time() - last_time
         dt *= 60
@@ -100,7 +95,6 @@ def main():
     
     titleScreen = True
     # title screen
-    pygame.mixer.Sound.play(flapfx)
     while titleScreen:
         dt = time.time() - last_time
         dt *= 60
@@ -121,7 +115,6 @@ def main():
         # so the user clicked, and by any change the mouse's position was on the buttons
         if (clicked and checkCollisions(mouseX, mouseY, 3, 3, DISPLAY.get_width()/2 - retry_button.get_width()/2, 288, retry_button.get_width(), retry_button.get_height())):
             clicked = False
-            pygame.mixer.Sound.play(upgradefx)
             titleScreen = False
 
         DISPLAY.fill(WHITE)
@@ -204,14 +197,12 @@ def main():
             rotOffset = -5
         if jump and not dead:
             player.velocity.y = -flapForce
-            pygame.mixer.Sound.play(flapfx)
         player.position.y += player.velocity.y*dt
         player.velocity.y = clamp(player.velocity.y + player.acceleration*dt, -99999999999, 50)
 
         health -= 0.2*dt
         if health <= 0 and not dead:
             dead = True
-            pygame.mixer.Sound.play(deadfx)
             
 
         for bean in beans:
@@ -220,7 +211,6 @@ def main():
                 bean.position.x = random.randrange(0, DISPLAY.get_width() - bean.sprite.get_width())
             if (checkCollisions(player.position.x, player.position.y, player.currentSprite.get_width(), player.currentSprite.get_height(), bean.position.x, bean.position.y, bean.sprite.get_width(), bean.sprite.get_height())):
                 dead = False
-                pygame.mixer.Sound.play(beanfx)
                 beanCount += 1
                 health = 100
                 bean.position.y -= DISPLAY.get_height() - random.randrange(0, 200)
@@ -230,7 +220,6 @@ def main():
             buttonX,buttonY = 220 + (buttons.index(button)*125), 393
             if clicked and not dead and checkCollisions(mouseX, mouseY, 3, 3, buttonX, buttonY, button.sprite.get_width(), button.sprite.get_height()):
                 if (beanCount >= button.price):
-                    pygame.mixer.Sound.play(upgradefx)
                     button.level += 1
                     beanCount -= button.price
                     button.price = round(button.price*2.5)
@@ -266,7 +255,6 @@ def main():
             for i in range(5): beans.append(Bean())
             for bean in beans:
                 bean.position.xy = random.randrange(0, DISPLAY.get_width() - bean.sprite.get_width()), beans.index(bean)*-200 - player.position.y
-            pygame.mixer.Sound.play(upgradefx)
             dead = False         
 
         
